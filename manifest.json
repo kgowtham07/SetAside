@@ -1,0 +1,18 @@
+{
+
+    "description" : "Save and Close the Tabs in Current Window",
+    "manifest_version" : 2,
+    "name" : "Set Aside",
+    "version" : "1.0",
+
+    "permissions" : [
+        "tabs","storage"
+    ],
+
+    "browser_action" : {
+        "default_icon": "icons/beasts-32.png",
+        "default_title" : "SetAside",
+        "default_popup" : "popup/set_aside.html"
+    }
+
+}
