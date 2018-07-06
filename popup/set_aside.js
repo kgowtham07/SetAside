@@ -1,4 +1,3 @@
-//function listenForClicks() {
     document.addEventListener("click", (e) => {
   
       
@@ -8,71 +7,124 @@
        * send a "beastify" message to the content script in the active tab.
        */
       function getTabs(tabs) {
-        console.log(tabs.workset);
-        var obj = JSON.parse(tabs.workset);
-        
+        console.log(tabs);
+        var obj = JSON.parse(tabs.master_workset);
+        console.log(obj);
+        var ws = obj.workset;
         var i = 0;
-        for (i in obj.s_tab) {
-          console.log(obj.s_tab[i]);
-          var creating = browser.tabs.create({url:`${obj.s_tab[i]}`});
-        creating.then(setItem, reportError);
+        for (i in ws) {
+          console.log(ws[i].s_tab);
+          var j = 0;
+          for (j in (ws[i].s_tab)){
+            console.log(ws[i].s_tab[j]);
+              var creating = browser.tabs.create({url:`${ws[i].s_tab[j]}`});
+              creating.then(setItem, reportError);
+          }
+        
       } 
 
-        // for (let tab of tabs) {
-        //     // tab.url requires the `tabs` permission
-        //     console.log(tab.url);
-        //   }
         browser.storage.local.clear();
       }
 
       function setAside(tabs){
 
-        var dt = new Date();
-        var timeStamp = dt.toUTCString();
+        browser.storage.local.get("master_workset",function(master_workset_db){
 
-        var workset = {name : `${timeStamp}` , s_tab : []};
-        workset = JSON.stringify(workset);
+          console.log(`Master Workset ${master_workset_db}`)
+          
+          try{
 
-        var i = 0;
-        var obj = JSON.parse(workset);
-       
-        var creating = browser.tabs.create({});
-        creating.then(setItem, reportError);
-       
-        for (let tab of tabs){
-          obj['s_tab'].push(tab.url);
-          console.log(tab.id)
-       
-          var removing = browser.tabs.remove(tab.id);
-          removing.then(setItem, reportError);
-       
-        }
+            var master_workset_obj = JSON.parse(master_workset_db.master_workset);
+            
+            var dt = new Date();
+            var timeStamp = dt.toUTCString();
 
-        workset = JSON.stringify(obj);
-        console.log(`Message going to be saved: ${workset}`);
+            var present_workset = {name : `${timeStamp}` , s_tab : []};
+            present_workset = JSON.stringify(present_workset);
 
-        browser.storage.local.set({workset})
-          .then(setItem, reportError);
+            var i = 0;
+            var obj = JSON.parse(present_workset);
+          
+            var creating = browser.tabs.create({});
+            creating.then(setItem, reportError);
+          
+            for (let tab of tabs){
+              obj['s_tab'].push(tab.url);
+              console.log(tab.id)
+          
+              var removing = browser.tabs.remove(tab.id);
+              removing.then(setItem, reportError);
+          
+            }
+
+            present_workset = JSON.stringify(obj);
+            console.log(`Message2 going to be saved: ${present_workset}`);
+
+            master_workset_obj['workset'].push(obj);
+            var master_workset = JSON.stringify(master_workset_obj);
+
+            console.log(`Message2 saved: ${master_workset}`);
+            browser.storage.local.set({master_workset})
+              .then(setItem, reportError);
+          }
+          catch(error){
+            var master_workset = {workset : []}
+            master_workset = JSON.stringify(master_workset);
+            master_workset_obj = JSON.parse(master_workset);
+            console.log(master_workset);
+            // master_workset = JSON.stringify(master_workset);
+            // master_workset_obj = JSON.parse(master_workset);
+            // console.log(master_workset_obj);
+
+            var dt = new Date();
+            var timeStamp = dt.toUTCString();
+
+            var present_workset = {name : `${timeStamp}` , s_tab : []};
+            present_workset = JSON.stringify(present_workset);
+
+            var i = 0;
+            var obj = JSON.parse(present_workset);
+          
+            var creating = browser.tabs.create({});
+            creating.then(setItem, reportError);
+          
+            for (let tab of tabs){
+              obj['s_tab'].push(tab.url);
+              console.log(tab.id)
+          
+              var removing = browser.tabs.remove(tab.id);
+              removing.then(setItem, reportError);
+          
+            }
+
+            var parsed_present_ws = obj;
+            present_workset = JSON.stringify(obj);
+            console.log(`Message going to be saved: ${parsed_present_ws}`);
+
+          // master_workset_obj['workset'].push(present_workset);
+            master_workset_obj['workset'].push(parsed_present_ws);
+            master_workset = JSON.stringify(master_workset_obj);
+
+            console.log(`Message saved: ${master_workset}`);
+            browser.storage.local.set({master_workset})
+              .then(setItem, reportError);
+          }
+      });
+
       }
+      
 
       function setItem() {
         console.log("OK");
       }
 
-
-       /**
-       * Just log the error to the console.
-       */
       function reportError(error) {
         console.error(`Could not statisfy: ${error}`);
       }
   
-      /**
-       * Get the active tab,
-       * then call "beastify()" or "reset()" as appropriate.
-       */
+      
       if (e.target.classList.contains("getTabs")) {
-        browser.storage.local.get("workset")
+        browser.storage.local.get("master_workset")
           .then(getTabs)
           .catch(reportError);
       }
@@ -82,20 +134,3 @@
           .catch(reportError);
       }
     });
-  //}
-
-
-
-// function logTabs(tabs) {
-//     for (let tab of tabs) {
-//       // tab.url requires the `tabs` permission
-//       console.log(tab.url);
-//     }
-//   }
-  
-// function onError(error) {
-//     console.log(`Error: ${error}`);
-// }
-//   console.log("test1");
-//   var querying = browser.tabs.query({currentWindow: true});
-//   querying.then(logTabs, onError);
