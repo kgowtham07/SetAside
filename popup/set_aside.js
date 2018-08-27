@@ -1,11 +1,7 @@
     document.addEventListener("click", (e) => {
   
       
-      /**
-       * Insert the page-hiding CSS into the active tab,
-       * then get the beast URL and
-       * send a "beastify" message to the content script in the active tab.
-       */
+      
       function getTabs(tabs) {
         console.log(tabs);
         var obj = JSON.parse(tabs.master_workset);
@@ -67,14 +63,14 @@
             browser.storage.local.set({master_workset})
               .then(setItem, reportError);
           }
+          
+          
           catch(error){
             var master_workset = {workset : []}
             master_workset = JSON.stringify(master_workset);
             master_workset_obj = JSON.parse(master_workset);
             console.log(master_workset);
-            // master_workset = JSON.stringify(master_workset);
-            // master_workset_obj = JSON.parse(master_workset);
-            // console.log(master_workset_obj);
+            
 
             var dt = new Date();
             var timeStamp = dt.toUTCString();
@@ -101,7 +97,7 @@
             present_workset = JSON.stringify(obj);
             console.log(`Message going to be saved: ${parsed_present_ws}`);
 
-          // master_workset_obj['workset'].push(present_workset);
+          
             master_workset_obj['workset'].push(parsed_present_ws);
             master_workset = JSON.stringify(master_workset_obj);
 
@@ -134,3 +130,9 @@
           .catch(reportError);
       }
     });
+
+    // "sidebar_action": {
+    //     "default_title": "My sidebar",
+    //     "default_panel": "sidebar.html",
+    //     "default_icon": "sidebar_icon.png"
+    //   }

@@ -3,7 +3,12 @@
     "description" : "Save and Close the Tabs in Current Window",
     "manifest_version" : 2,
     "name" : "Set Aside",
-    "version" : "1.0",
+    "version" : "1.0.1",
+    "applications": {
+        "gecko": {
+          "id": "setaside@your-domain.com"
+        }
+      },
 
     "permissions" : [
         "tabs","storage"
